@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -16,13 +15,12 @@ import {
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import { loginSchema, LoginSchema } from "@/validator/login.schema"
-import { FormMessage } from "./ui/form"
+import { FormMessage } from "@/components/ui/form-message" // ✅ updated import
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const [useOtp, setUseOtp] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
 
-  // ✅ Hook Form setup
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -46,12 +44,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
     }
     setOtpSent(true)
     console.log("📨 Sending OTP to:", email)
-    // ⚡ Add your API call here
   }
 
   const onSubmit = async (data: LoginSchema) => {
     console.log("✅ Login data:", data)
-    // ⚡ API call for login or OTP verification
   }
 
   return (
@@ -67,7 +63,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 </p>
               </div>
 
-              {/* Email / Phone Field */}
+              {/* Email */}
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
@@ -76,12 +72,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   placeholder={useOtp ? "Enter your email or phone" : "m@example.com"}
                   {...register("email")}
                 />
-                {errors.email && (
-                  <span className="text-red-500 text-sm">{errors.email.message}</span>
-                )}
+                <FormMessage message={errors.email?.message} />
               </Field>
 
-              {/* Password or OTP Field */}
+              {/* Password or OTP */}
               {!useOtp ? (
                 <Field>
                   <div className="flex items-center">
@@ -94,15 +88,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                     </a>
                   </div>
                   <Input id="password" type="password" {...register("password")} />
-                  {errors.password && (
-                    <span className="text-red-500 text-sm">{errors.password.message}</span>
-                  )}
+                  <FormMessage message={errors.password?.message} />
                 </Field>
               ) : otpSent ? (
                 <Field>
                   <FieldLabel htmlFor="otp">Enter OTP</FieldLabel>
                   <Input id="otp" type="text" maxLength={6} {...register("otp")} />
-                  <FormMessage message={errors.password?.message as string} />
+                  <FormMessage message={errors.otp?.message} />
                 </Field>
               ) : null}
 
@@ -123,7 +115,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 )}
               </Field>
 
-              {/* Toggle between login modes */}
+              {/* Toggle */}
               <FieldDescription className="text-center text-sm">
                 {useOtp ? (
                   <>
@@ -156,7 +148,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             </FieldGroup>
           </form>
 
-          {/* Side image */}
+          {/* Image */}
           <div className="bg-muted relative flex justify-center items-center md:block">
             <Image
               className="object-contain dark:brightness-[0.2] dark:grayscale"
