@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import { loginSchema, LoginSchema } from "@/validator/login.schema"
-import { FormMessage } from "@/components/ui/form-message" // ✅ updated import
+import { FormMessage } from "@/components/ui/form-message"
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
   const [useOtp, setUseOtp] = useState(false)
@@ -31,13 +31,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   })
 
   const {
-    register,
+    control,
     handleSubmit,
+    getValues,
     formState: { errors, isSubmitting },
+    reset,
   } = form
 
   const handleSendOtp = async () => {
-    const email = form.getValues("email")
+    const email = getValues("email")
     if (!email) {
       alert("Please enter your email or phone first.")
       return
@@ -63,19 +65,25 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 </p>
               </div>
 
-              {/* Email */}
+              {/* Email Field */}
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type={useOtp ? "text" : "email"}
-                  placeholder={useOtp ? "Enter your email or phone" : "m@example.com"}
-                  {...register("email")}
+                <Controller
+                  name="email"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      id="email"
+                      type={useOtp ? "text" : "email"}
+                      placeholder={useOtp ? "Enter your email" : "m@example.com"}
+                      {...field}
+                    />
+                  )}
                 />
                 <FormMessage message={errors.email?.message} />
               </Field>
 
-              {/* Password or OTP */}
+              {/* Password or OTP Field */}
               {!useOtp ? (
                 <Field>
                   <div className="flex items-center">
@@ -87,13 +95,25 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                       Forgot your password?
                     </a>
                   </div>
-                  <Input id="password" type="password" {...register("password")} />
+                  <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => (
+                      <Input id="password" type="password" {...field} />
+                    )}
+                  />
                   <FormMessage message={errors.password?.message} />
                 </Field>
               ) : otpSent ? (
                 <Field>
                   <FieldLabel htmlFor="otp">Enter OTP</FieldLabel>
-                  <Input id="otp" type="text" maxLength={6} {...register("otp")} />
+                  <Controller
+                    name="otp"
+                    control={control}
+                    render={({ field }) => (
+                      <Input id="otp" type="text" maxLength={6} {...field} />
+                    )}
+                  />
                   <FormMessage message={errors.otp?.message} />
                 </Field>
               ) : null}
@@ -115,7 +135,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 )}
               </Field>
 
-              {/* Toggle */}
+              {/* Toggle Login Type */}
               <FieldDescription className="text-center text-sm">
                 {useOtp ? (
                   <>
@@ -126,7 +146,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                       onClick={() => {
                         setUseOtp(false)
                         setOtpSent(false)
-                        form.reset()
+                        reset()
                       }}
                     >
                       Use password
@@ -148,17 +168,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
             </FieldGroup>
           </form>
 
-          {/* Image */}
-          <div className="bg-muted relative flex justify-center items-center md:block">
-            <Image
-              className="object-contain dark:brightness-[0.2] dark:grayscale"
-              src="/login-image.png"
-              alt="Login picture"
-              width={400}
-              height={400}
-              priority
-            />
-          </div>
+          {/* Image Section */}
+<div className="hidden md:flex justify-center items-center bg-muted relative">
+  <Image
+    className="object-contain dark:brightness-[0.2] dark:grayscale"
+    src="/login-image.png"
+    alt="Login picture"
+    width={400}
+    height={400}
+    priority
+  />
+</div>
+
+
         </CardContent>
       </Card>
     </div>

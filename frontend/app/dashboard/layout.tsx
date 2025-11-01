@@ -10,6 +10,7 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider
+      
       style={
         {
           "--sidebar-width": "calc(var(--spacing) * 72)",
@@ -18,9 +19,9 @@ export default function DashboardLayout({
       }
     >
       <AppSidebar variant="inset" />
-      <SidebarInset>
+      <SidebarInset >
         <SiteHeader />
-        <main className="flex flex-1 flex-col p-4 md:p-6 bg-background">
+        <main className="flex flex-1 flex-col">
           {children}
         </main>
       </SidebarInset>

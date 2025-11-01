@@ -65,7 +65,7 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
               </Field>
             </FieldGroup>
           </form>
-          <div className="bg-muted relative flex justify-center items-center md:block">
+          <div className="hidden md:flex justify-center items-center bg-muted relative">
             <Image
               className="object-contain dark:brightness-[0.2] dark:grayscale"
               src="/login-image.png"
@@ -75,6 +75,7 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
               priority
             />
           </div>
+
         </CardContent>
       </Card>
       <FieldDescription className="text-center">
