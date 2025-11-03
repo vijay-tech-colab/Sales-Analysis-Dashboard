@@ -26,7 +26,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 
 export function NavDocuments({
@@ -39,7 +38,7 @@ export function NavDocuments({
   }[]
 }) {
   const { isMobile } = useSidebar()
-  const pathname = usePathname()
+  const [activeItem, setActiveItem] = React.useState<string | null>(null)
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -49,38 +48,43 @@ export function NavDocuments({
 
       <SidebarMenu>
         {items.map((item) => {
-          const isActive =
-            pathname === item.url || pathname.startsWith(`${item.url}/`)
+          const isActive = activeItem === item.name
 
           return (
             <SidebarMenuItem
               key={item.name}
               className={cn(
-                "group rounded-lg transition-colors duration-150",
+                "group relative rounded-md transition-all duration-200 overflow-hidden",
                 isActive
-                  ? "bg-primary/10 border border-primary/30 text-primary shadow-sm"
-                  : "hover:bg-accent/60"
+                  ? "bg-primary/10 border border-primary/30 text-primary shadow-md"
+                  : "hover:bg-accent/70 hover:text-black text-black"
               )}
             >
+              {/* Left Active Indicator */}
+              {isActive && (
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-sm shadow-[2px_0_5px_rgba(0,0,0,0.2)]" />
+              )}
+
               {/* Main Button */}
               <SidebarMenuButton asChild>
                 <Link
                   href={item.url}
+                  onClick={() => setActiveItem(item.name)}
                   className={cn(
-                    "flex items-center justify-between gap-2 px-3 py-2 w-full rounded-lg transition-all duration-200",
+                    "flex items-center justify-between gap-2 px-3 py-2 w-full rounded-md transition-all duration-200",
                     isActive ? "text-primary" : "text-black hover:text-black"
                   )}
                 >
                   <div className="flex items-center gap-2">
                     <item.icon
                       className={cn(
-                        "h-4 w-4 transition-colors",
+                        "h-4 w-4 transition-colors ml-1",
                         isActive ? "text-primary" : "text-black"
                       )}
                     />
                     <span
                       className={cn(
-                        "font-medium",
+                        "font-medium ml-1",
                         isActive ? "text-primary" : "text-black"
                       )}
                     >
